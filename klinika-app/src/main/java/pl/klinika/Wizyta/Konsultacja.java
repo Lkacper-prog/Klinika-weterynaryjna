@@ -15,5 +15,8 @@ public class Konsultacja extends ZabiegMedyczny {
 
     @Override
     public void wykonajZabieg(Wizyta wizyta) {
+        System.out.println("Przeprowadzenie konsultacji dla zwierzęcia: " + wizyta.getZwierze().getImie());
+        System.out.println("Wywiad: " + this.wywiad);
+        System.out.println("Koszt konsultacji: " + this.getCenaBazowa() + " PLN");
     }
 }

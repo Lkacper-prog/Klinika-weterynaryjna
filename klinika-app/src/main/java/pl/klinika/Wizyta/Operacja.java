@@ -15,5 +15,15 @@ public class Operacja extends ZabiegMedyczny {
 
     @Override
     public void wykonajZabieg(Wizyta wizyta) {
+        System.out.println("Przeprowadzenie operacji dla zwierzęcia: " + wizyta.getZwierze().getImie());
+        
+        if (Boolean.TRUE.equals(this.czyWymagaSzpitala)) {
+            System.out.println("⚠️ UWAGA: Operacja wymaga hospitalizacji zwierzęcia!");
+            System.out.println("Zalecana obserwacja po operacji: minimum 24h");
+        } else {
+            System.out.println("ℹ️ Operacja nie wymaga hospitalizacji - pacjent może wrócić do domu");
+        }
+        
+        System.out.println("Koszt operacji: " + this.getCenaBazowa() + " PLN");
     }
 }

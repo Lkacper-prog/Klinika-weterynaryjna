@@ -30,4 +30,17 @@ public class Wizyta {
     @ManyToOne
     @JoinColumn(name = "weterynarz_id")
     private Weterynarz weterynarz;
+
+    /**
+     * Oblicza całkowity koszt wizyty poprzez zsumowanie cenBasoweej wszystkich zabiegów
+     * @return suma kosztów wszystkich zabiegów przypisanych do wizyty
+     */
+    public double podsumujCalkowityKoszt() {
+        if (zabiegi == null || zabiegi.isEmpty()) {
+            return 0.0;
+        }
+        return zabiegi.stream()
+                .mapToDouble(ZabiegMedyczny::getCenaBazowa)
+                .sum();
+    }
 }
