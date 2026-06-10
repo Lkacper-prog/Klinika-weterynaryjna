@@ -2,34 +2,52 @@ package pl.klinika.Core;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+/**
+ * Globalna obsługa wyjątków dla aplikacji.
+ * Przechwytuje wyjątki biznesowe i zwraca odpowiednie komunikaty HTTP.
+ */
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * Obsługuje wyjątek gdy zwierzę nie zostanie znalezione
+     *
+     * @param ex wyjątek ZwierzeNieZnalezioneException
+     * @return ResponseEntity z komunikatem błędu i statusem 404 Not Found
+     */
     @ExceptionHandler(ZwierzeNieZnalezioneException.class)
-    public ResponseEntity<Map<String, Object>> handleZwierzeNieZnalezione(ZwierzeNieZnalezioneException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.NOT_FOUND.value());
-        body.put("error", "Zwierzę nie znalezione");
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> handleZwierzeNieZnalezioneException(ZwierzeNieZnalezioneException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
     }
 
-    @ExceptionHandler(NiedostepnyTerminException.class)
-    public ResponseEntity<Map<String, Object>> handleNiedostepnyTermin(NiedostepnyTerminException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.CONFLICT.value());
-        body.put("error", "Termin niedostępny");
-        body.put("message", ex.getMessage());
+    /**
+     * Obsługuje wyjątek gdy weterynarz nie zostanie znaleziony
+     *
+     * @param ex wyjątek WeterynarzNieZnalezionyException
+     * @return ResponseEntity z komunikatem błędu i statusem 404 Not Found
+     */
+    @ExceptionHandler(WeterynarzNieZnalezionyException.class)
+    public ResponseEntity<String> handleWeterynarzNieZnalezionyException(WeterynarzNieZnalezionyException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    /**
+     * Obsługuje wyjątek gdy termin wizyty jest niedostępny (kolizja z inną wizytą)
+     *
+     * @param ex wyjątek NiedostepnyTerminException
+     * @return ResponseEntity z komunikatem błędu i statusem 409 Conflict
+     */
+    @ExceptionHandler(NiedostepnyTerminException.class)
+    public ResponseEntity<String> handleNiedostepnyTerminException(NiedostepnyTerminException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ex.getMessage());
     }
 }

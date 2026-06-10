@@ -3,6 +3,7 @@ package pl.klinika.Zwierze;
 import jakarta.persistence.*;
 import lombok.Data;
 import pl.klinika.Uzytkownik.Klient;
+
 import java.time.LocalDate;
 
 @Entity
@@ -12,13 +13,13 @@ public class Zwierze {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name ="imie", nullable=false)
+    @Column(name = "imie", nullable = false)
     private String imie;
 
-    @Column(name = "gatunek", nullable=false)
+    @Column(name = "gatunek", nullable = false)
     private String gatunek;
 
-    @Column(name ="dataurodzenia", nullable = false)
+    @Column(name = "dataurodzenia", nullable = false)
     private LocalDate dataurodzenia;
 
     @ManyToOne

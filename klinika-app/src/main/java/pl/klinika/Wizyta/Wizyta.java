@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import pl.klinika.Uzytkownik.Weterynarz;
 import pl.klinika.Zwierze.Zwierze;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,8 @@ public class Wizyta {
     private LocalDateTime dataczas;
 
     @Column(name = "status", nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private StatusWizyty status;
 
     @OneToMany(mappedBy = "wizyta", cascade = CascadeType.ALL)
     private List<ZabiegMedyczny> zabiegi;
@@ -32,7 +34,8 @@ public class Wizyta {
     private Weterynarz weterynarz;
 
     /**
-     * Oblicza całkowity koszt wizyty poprzez zsumowanie cenBasoweej wszystkich zabiegów
+     * Oblicza całkowity koszt wizyty poprzez zsumowanie ceny Bazowej wszystkich zabiegów
+     *
      * @return suma kosztów wszystkich zabiegów przypisanych do wizyty
      */
     public double podsumujCalkowityKoszt() {

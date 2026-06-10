@@ -3,12 +3,15 @@ package pl.klinika.Wizyta;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "szczepienie")
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Slf4j
 public class Szczepienie extends ZabiegMedyczny {
 
     @Column(name = "preparat")
@@ -25,11 +28,11 @@ public class Szczepienie extends ZabiegMedyczny {
         LocalDate dataWizyta = wizyta.getDataczas().toLocalDate();
         this.dataWaznosci = dataWizyta.plusMonths(this.waznoscWMiesiacach);
 
-        System.out.println("Przeprowadzenie szczepienia dla zwierzęcia: " + wizyta.getZwierze().getImie());
-        System.out.println("Preparat: " + this.preparat);
-        System.out.println("Data szczepienia: " + dataWizyta);
-        System.out.println("Data ważności do: " + this.dataWaznosci);
-        System.out.println("Ważność: " + this.waznoscWMiesiacach + " miesięcy");
-        System.out.println("Koszt szczepienia: " + this.getCenaBazowa() + " PLN");
+        log.info("Przeprowadzenie szczepienia dla zwierzęcia: {}", wizyta.getZwierze().getImie());
+        log.info("Preparat: {}", this.preparat);
+        log.info("Data szczepienia: {}", dataWizyta);
+        log.info("Data ważności do: {}", this.dataWaznosci);
+        log.info("Ważność: {} miesięcy", this.waznoscWMiesiacach);
+        log.info("Koszt szczepienia: {} PLN", this.getCenaBazowa());
     }
 }

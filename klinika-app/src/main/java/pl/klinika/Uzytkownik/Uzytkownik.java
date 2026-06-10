@@ -19,5 +19,6 @@ public class Uzytkownik {
     private String password;
 
     @Column(name = "rola", nullable = false)
-    private String rola;
+    @Enumerated(EnumType.STRING)
+    private RolaUzytkownika rola;
 }

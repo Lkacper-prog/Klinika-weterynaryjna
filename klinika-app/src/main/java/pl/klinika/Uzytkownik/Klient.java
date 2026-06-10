@@ -1,9 +1,11 @@
 package pl.klinika.Uzytkownik;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import pl.klinika.Zwierze.Zwierze;
+
 import java.util.List;
 
 @Entity
@@ -16,5 +18,6 @@ public class Klient extends Uzytkownik {
     private String nrTelefonu;
 
     @OneToMany(mappedBy = "wlasciciel", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Zwierze> zwierzaki;
 }

@@ -3,11 +3,13 @@ package pl.klinika.Wizyta;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "operacja")
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Slf4j
 public class Operacja extends ZabiegMedyczny {
 
     @Column(name = "czy_wymaga_szpitala")
@@ -15,15 +17,15 @@ public class Operacja extends ZabiegMedyczny {
 
     @Override
     public void wykonajZabieg(Wizyta wizyta) {
-        System.out.println("Przeprowadzenie operacji dla zwierzęcia: " + wizyta.getZwierze().getImie());
-        
+        log.info("Przeprowadzenie operacji dla zwierzęcia: {}", wizyta.getZwierze().getImie());
+
         if (Boolean.TRUE.equals(this.czyWymagaSzpitala)) {
-            System.out.println("⚠️ UWAGA: Operacja wymaga hospitalizacji zwierzęcia!");
-            System.out.println("Zalecana obserwacja po operacji: minimum 24h");
+            log.warn("UWAGA: Operacja wymaga hospitalizacji zwierzęcia!");
+            log.info("Zalecana obserwacja po operacji: minimum 24h");
         } else {
-            System.out.println("ℹ️ Operacja nie wymaga hospitalizacji - pacjent może wrócić do domu");
+            log.info("Operacja nie wymaga hospitalizacji - pacjent może wrócić do domu");
         }
-        
-        System.out.println("Koszt operacji: " + this.getCenaBazowa() + " PLN");
+
+        log.info("Koszt operacji: {} PLN", this.getCenaBazowa());
     }
 }

@@ -3,6 +3,7 @@ package pl.klinika.Uzytkownik;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -19,13 +20,13 @@ public class UzytkownikController {
 
     @PostMapping("/klient")
     public ResponseEntity<Klient> dodajKlienta(@RequestBody Klient klient) {
-        klient.setRola("KLIENT");
+        klient.setRola(RolaUzytkownika.KLIENT);
         return ResponseEntity.ok(uzytkownikRepository.save(klient));
     }
 
     @PostMapping("/weterynarz")
     public ResponseEntity<Weterynarz> dodajWeterynarza(@RequestBody Weterynarz weterynarz) {
-        weterynarz.setRola("WETERYNARZ");
+        weterynarz.setRola(RolaUzytkownika.WETERYNARZ);
         return ResponseEntity.ok(uzytkownikRepository.save(weterynarz));
     }
 }
