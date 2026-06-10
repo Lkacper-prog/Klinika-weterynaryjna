@@ -1,0 +1,344 @@
+@startuml Klinika_Weterynaryjna_UML
+
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #F0F0F0
+skinparam classBorderColor #333333
+skinparam arrowColor #333333
+skinparam fontColor #000000
+
+' ==================== ENUMS ====================
+enum RolaUzytkownika {
+  KLIENT
+  WETERYNARZ
+  ADMIN
+}
+
+enum StatusWizyty {
+  ZAPLANOWANA
+  ZAKONCZONA
+  ODWOLANA
+}
+
+' ==================== HIERARCHIA UZYTKOWNIK ====================
+abstract class Uzytkownik {
+  - id: Integer <<PK>>
+  - email: String <<UNIQUE>>
+  - password: String
+  - rola: RolaUzytkownika
+  ---
+  + getId(): Integer
+  + getEmail(): String
+  + getRola(): RolaUzytkownika
+}
+
+class Klient extends Uzytkownik {
+  - nrTelefonu: String
+  - zwierzaki: List<Zwierze>
+  ---
+  + getNrTelefonu(): String
+  + getZwierzaki(): List<Zwierze>
+  + addZwierze(Zwierze): void
+}
+
+class Weterynarz extends Uzytkownik {
+  - numerPWZ: String
+  - specjalizacja: String
+  ---
+  + getNumerPWZ(): String
+  + getSpecjalizacja(): String
+}
+
+' ==================== ENCJA ZWIERZE ====================
+class Zwierze {
+  - id: Integer <<PK>>
+  - imie: String
+  - gatunek: String
+  - dataurodzenia: LocalDate
+  - wlasciciel: Klient <<FK>>
+  ---
+  + getId(): Integer
+  + getImie(): String
+  + getGatunek(): String
+  + getDataurodzenia(): LocalDate
+  + getWlasciciel(): Klient
+  + setWlasciciel(Klient): void
+}
+
+' ==================== HIERARCHIA ZABIEGI ====================
+abstract class ZabiegMedyczny {
+  - id: Integer <<PK>>
+  - nazwa: String
+  - cenaBazowa: double
+  - wizyta: Wizyta <<FK>>
+  ---
+  + getId(): Integer
+  + getNazwa(): String
+  + getCenaBazowa(): double
+  + getWizyta(): Wizyta
+  + setWizyta(Wizyta): void
+  + {abstract} wykonajZabieg(Wizyta): void
+}
+
+class Konsultacja extends ZabiegMedyczny {
+  - wywiad: String
+  ---
+  + getWywiad(): String
+  + setWywiad(String): void
+  + wykonajZabieg(Wizyta): void
+}
+
+class Operacja extends ZabiegMedyczny {
+  - czyWymagaSzpitala: boolean
+  - rekomendacje: String
+  ---
+  + isCzyWymagaSzpitala(): boolean
+  + setCzyWymagaSzpitala(boolean): void
+  + getRekomendacje(): String
+  + wykonajZabieg(Wizyta): void
+}
+
+class Szczepienie extends ZabiegMediczny {
+  - preparat: String
+  - waznoscWMiesiacach: int
+  - dataWaznosci: LocalDate
+  ---
+  + getPreparat(): String
+  + getWaznoscWMiesiacach(): int
+  + getDataWaznosci(): LocalDate
+  + setDataWaznosci(LocalDate): void
+  + wykonajZabieg(Wizyta): void
+}
+
+' ==================== ENCJA WIZYTA ====================
+class Wizyta {
+  - id: Integer <<PK>>
+  - dataczas: LocalDateTime
+  - status: StatusWizyty
+  - zabiegi: List<ZabiegMedyczny>
+  - zwierze: Zwierze <<FK>>
+  - weterynarz: Weterynarz <<FK>>
+  ---
+  + getId(): Integer
+  + getDataczas(): LocalDateTime
+  + getStatus(): StatusWizyty
+  + setStatus(StatusWizyty): void
+  + getZabiegi(): List<ZabiegMedyczny>
+  + addZabieg(ZabiegMedyczny): void
+  + getZwierze(): Zwierze
+  + getWeterynarz(): Weterynarz
+  + podsumujCalkowityKoszt(): double
+}
+
+' ==================== DATA TRANSFER OBJECTS ====================
+class ZwierzeCreateDTO {
+  - imie: String <<@NotBlank>>
+  - gatunek: String <<@NotBlank>>
+  - dataurodzenia: LocalDate
+  ---
+  + getImie(): String
+  + getGatunek(): String
+  + getDataurodzenia(): LocalDate
+}
+
+class WizytaCreateDTO {
+  - data: LocalDateTime <<@Future>>
+  - zwierzeId: Integer <<@NotNull>>
+  - vetId: Integer <<@NotNull>>
+  ---
+  + getData(): LocalDateTime
+  + getZwierzeId(): Integer
+  + getVetId(): Integer
+}
+
+class RaportLeczeniaDTO {
+  - imieZwierzecia: String
+  - liczbaWizyt: int
+  - zabiegi: List<Map<String,Object>>
+  - lacznyKoszt: double
+  ---
+  + getImieZwierzecia(): String
+  + getLiczbaWizyt(): int
+  + getZabiegi(): List<Map>
+  + getLacznyKoszt(): double
+}
+
+' ==================== REPOSITORIES ====================
+interface UzytkownikRepository {
+  + findById(Integer): Uzytkownik
+  + findByEmail(String): Uzytkownik
+  + findAll(): List<Uzytkownik>
+  + save(Uzytkownik): Uzytkownik
+  + delete(Uzytkownik): void
+}
+
+interface KlientRepository {
+  + findById(Integer): Klient
+  + findAll(): List<Klient>
+  + save(Klient): Klient
+}
+
+interface ZwierzeRepository {
+  + findById(Integer): Zwierze
+  + findAll(): List<Zwierze>
+  + findByWlasciciel_Id(Integer): List<Zwierze>
+  + save(Zwierze): Zwierze
+}
+
+interface WizytaRepository {
+  + findById(Integer): Wizyta
+  + findAll(): List<Wizyta>
+  + findByZwierze_Id(Integer): List<Wizyta>
+  + findByWeterynarz_IdAndData(Integer, LocalDateTime): Wizyta
+  + save(Wizyta): Wizyta
+}
+
+' ==================== SERVICES ====================
+class ZwierzeService {
+  - zwierzeRepository: ZwierzeRepository
+  - klientRepository: KlientRepository
+  - wizytaRepository: WizytaRepository
+  ---
+  + zarejestrujZwierze(Zwierze, Integer): Zwierze
+  + pobierzHistorieLeczenia(Integer): List<Wizyta>
+  + generateReport(Integer): RaportLeczeniaDTO
+}
+
+class WizytaService {
+  - wizytaRepository: WizytaRepository
+  - zwierzeRepository: ZwierzeRepository
+  - uzytkownikRepository: UzytkownikRepository
+  ---
+  + sprawdzKonfliktTerminow(LocalDateTime, Integer): boolean
+  + umowWizyte(LocalDateTime, Integer, Integer): Wizyta
+  + zrealizujWizyte(Integer): Wizyta
+}
+
+class UzytkownikService {
+  - uzytkownikRepository: UzytkownikRepository
+  - klientRepository: KlientRepository
+  ---
+  + createKlient(Klient): Klient
+  + createWeterynarz(Weterynarz): Weterynarz
+  + getAllUzytkownicy(): List<Uzytkownik>
+}
+
+' ==================== CONTROLLERS ====================
+class ZwierzeController {
+  - zwierzeService: ZwierzeService
+  ---
+  + rejestrujZwierze(ZwierzeCreateDTO, Integer): ResponseEntity<Zwierze>
+  + pobierzHistoricę(Integer): ResponseEntity<List<Wizyta>>
+  + pobierzRaport(Integer): ResponseEntity<RaportLeczeniaDTO>
+}
+
+class WizytaController {
+  - wizytaService: WizytaService
+  ---
+  + umowWizyte(WizytaCreateDTO): ResponseEntity<Wizyta>
+  + zrealizujWizyte(Integer): ResponseEntity<Wizyta>
+}
+
+class UzytkownikController {
+  - uzytkownikService: UzytkownikService
+  ---
+  + rejestrujKlienta(Klient): ResponseEntity<Klient>
+  + rejestrujWeterynarz(Weterynarz): ResponseEntity<Weterynarz>
+  + getAllUzytkownicy(): ResponseEntity<List<Uzytkownik>>
+}
+
+' ==================== EXCEPTIONS ====================
+class ZwierzeNieZnalezioneException extends RuntimeException {
+  - message: String
+  ---
+  + ZwierzeNieZnalezioneException(String)
+}
+
+class NiedostepnyTerminException extends RuntimeException {
+  - message: String
+  ---
+  + NiedostepnyTerminException(String)
+}
+
+class WeterynarzNieZnalezionyException extends RuntimeException {
+  - message: String
+  ---
+  + WeterynarzNieZnalezionyException(String)
+}
+
+' ==================== EXCEPTION HANDLER ====================
+class GlobalExceptionHandler {
+  ---
+  + handleZwierzeNieZnalezione(ZwierzeNieZnalezioneException): ResponseEntity<Map>
+  + handleNiedostepnyTermin(NiedostepnyTerminException): ResponseEntity<Map>
+  + handleWeterynarzNieZnaleziony(WeterynarzNieZnalezionyException): ResponseEntity<Map>
+  + handleValidationException(MethodArgumentNotValidException): ResponseEntity<Map>
+}
+
+' ==================== RELACJE ====================
+
+' Uzytkownik - Klient/Weterynarz
+Klient --|> Uzytkownik : extends
+Weterynarz --|> Uzytkownik : extends
+
+' Klient - Zwierze (1:N)
+Klient "1" -- "0..*" Zwierze : owns
+
+' Zwierze - Wizyta (1:N)
+Zwierze "1" -- "0..*" Wizyta : has
+
+' Weterynarz - Wizyta (1:N)
+Weterynarz "1" -- "0..*" Wizyta : conducts
+
+' Wizyta - ZabiegMedyczny (1:N)
+Wizyta "1" -- "0..*" ZabiegMedyczny : contains
+
+' ZabiegMedyczny - Podklasy
+Konsultacja --|> ZabiegMedyczny : extends
+Operacja --|> ZabiegMedyczny : extends
+Szczepienie --|> ZabiegMedyczny : extends
+
+' DTOs - relacje
+ZwierzeCreateDTO ..> Zwierze : converts to
+WizytaCreateDTO ..> Wizyta : converts to
+RaportLeczeniaDTO ..> Wizyta : builds from
+
+' Repositories
+UzytkownikRepository ..> Uzytkownik : manages
+KlientRepository ..> Klient : manages
+ZwierzeRepository ..> Zwierze : manages
+WizytaRepository ..> Wizyta : manages
+
+' Services - Repositories
+ZwierzeService --> ZwierzeRepository : uses
+ZwierzeService --> KlientRepository : uses
+ZwierzeService --> WizytaRepository : uses
+
+WizytaService --> WizytaRepository : uses
+WizytaService --> ZwierzeRepository : uses
+WizytaService --> UzytkownikRepository : uses
+
+UzytkownikService --> UzytkownikRepository : uses
+UzytkownikService --> KlientRepository : uses
+
+' Controllers - Services
+ZwierzeController --> ZwierzeService : uses
+WizytaController --> WizytaService : uses
+UzytkownikController --> UzytkownikService : uses
+
+' Controllers - DTOs
+ZwierzeController ..> ZwierzeCreateDTO : receives
+ZwierzeController ..> RaportLeczeniaDTO : returns
+WizytaController ..> WizytaCreateDTO : receives
+
+' Exception Handler
+GlobalExceptionHandler --> ZwierzeNieZnalezioneException : handles
+GlobalExceptionHandler --> NiedostepnyTerminException : handles
+GlobalExceptionHandler --> WeterynarzNieZnalezionyException : handles
+
+' Enums
+Uzytkownik --> RolaUzytkownika : uses
+Wizyta --> StatusWizyty : uses
+
+@enduml
+
