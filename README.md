@@ -478,9 +478,11 @@ Wszystkie błędy są obsługiwane przez `GlobalExceptionHandler`:
 
 Projekt jest dostępny dla celów edukacyjnych.
 
-## 👨‍💻 Autor
+## 👨‍💻 Autorzy
 
-Kacper - Projekt zaliczeniowy (Czerwiec 2026)
+Kacper 
+Damian
+Konrad
 
 ---
 
