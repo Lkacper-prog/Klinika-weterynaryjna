@@ -325,79 +325,6 @@ graph TD
     style WIZ fill:#f3e5f5
 ```
 
-## 📊 Diagram Relacji Bazy Danych
-
-```mermaid
-erDiagram
-    UZYTKOWNIK ||--o{ KLIENT : is_a
-    UZYTKOWNIK ||--o{ WETERYNARZ : is_a
-    KLIENT ||--o{ ZWIERZE : owns
-    ZWIERZE ||--o{ WIZYTA : has
-    WETERYNARZ ||--o{ WIZYTA : conducts
-    WIZYTA ||--o{ ZABIEG_MEDYCZNY : contains
-    ZABIEG_MEDYCZNY ||--o{ KONSULTACJA : is_a
-    ZABIEG_MEDYCZNY ||--o{ OPERACJA : is_a
-    ZABIEG_MEDYCZNY ||--o{ SZCZEPIENIE : is_a
-
-    UZYTKOWNIK {
-        int id PK
-        string email UK
-        string haslo
-        string rola
-    }
-
-    KLIENT {
-        int id PK, FK
-        string nr_telefonu
-    }
-
-    WETERYNARZ {
-        int id PK, FK
-        string numer_pwz
-        string specjalizacja
-    }
-
-    ZWIERZE {
-        int id PK
-        string imie
-        string gatunek
-        date dataurodzenia
-        int wlasciciel_id FK
-    }
-
-    WIZYTA {
-        int id PK
-        datetime dataczas
-        string status
-        int zwierze_id FK
-        int weterynarz_id FK
-    }
-
-    ZABIEG_MEDYCZNY {
-        int id PK
-        string nazwa
-        double cena_bazowa
-        int wizyta_id FK
-    }
-
-    KONSULTACJA {
-        int id PK, FK
-        string wywiad
-    }
-
-    OPERACJA {
-        int id PK, FK
-        boolean czy_wymaga_szpitala
-    }
-
-    SZCZEPIENIE {
-        int id PK, FK
-        string preparat
-        int waznosc_w_miesiacach
-        date data_waznosci
-    }
-```
-
 ## 🔌 Endpoints API
 
 ### Zwierzęta
@@ -458,25 +385,8 @@ Wszystkie błędy są obsługiwane przez `GlobalExceptionHandler`:
 500 SERVER_ERROR  - Błąd serwera
 ```
 
-## 📚 Technologie i Best Practices
 
-| Aspekt | Technologia/Pattern |
-|--------|------------------|
-| **Framework** | Spring Boot 4.0.6 |
-| **Baza danych** | H2 + JPA/Hibernate |
-| **Walidacja** | Jakarta Validation |
-| **Logowanie** | SLF4J + Logback |
-| **Build Tool** | Maven |
-| **Dependency Injection** | Spring DI |
-| **ORM Pattern** | Active Record via Spring Data JPA |
-| **Error Handling** | Centralized Exception Handling |
-| **DTO Pattern** | Data Transfer Objects |
-| **Inheritance** | JOINED Table Strategy (Polimorfizm) |
-| **Code Generation** | Lombok |
 
-## 📝 Licencja
-
-Projekt jest dostępny dla celów edukacyjnych.
 
 ## 👨‍💻 Autorzy
 
@@ -484,13 +394,4 @@ Kacper
 Damian
 Konrad
 
----
-
-**Notatka:** Projekt demonstruje solidne zrozumienie:
-- ✅ Polimorfizmu i dziedziczenia w OOP
-- ✅ Architektur aplikacji (3-warstwowa: Controller → Service → Repository)
-- ✅ JPA/Hibernate i relacyjnych baz danych
-- ✅ Spring Boot best practices
-- ✅ Walidacji i obsługi błędów
-- ✅ RESTful API design
 - ✅ SOLID principles
