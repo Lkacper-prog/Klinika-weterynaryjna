@@ -255,5 +255,3 @@ Wszystkie błędy są obsługiwane przez `GlobalExceptionHandler`:
 Kacper 
 Damian
 Konrad
-
-- ✅ SOLID principles
