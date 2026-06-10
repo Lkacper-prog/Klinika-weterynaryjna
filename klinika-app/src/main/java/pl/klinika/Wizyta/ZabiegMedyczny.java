@@ -1,5 +1,6 @@
 package pl.klinika.Wizyta;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public abstract class ZabiegMedyczny {
 
     @ManyToOne
     @JoinColumn(name = "wizyta_id")
+    @JsonIgnore
     private Wizyta wizyta;
 
     public abstract void wykonajZabieg(Wizyta wizyta);

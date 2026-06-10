@@ -91,13 +91,11 @@ public class WizytaService {
      * @return zrealizowana wizyta
      * @throws ZwierzeNieZnalezioneException jeśli wizyta nie istnieje
      */
-    public Wizyta zrealizujWizyte(Integer wizytaId) {
+    public Wizyta zrealizujWizyte(Integer wizytaId, ZabiegCreateDTO dto) { // Zmienione parametry!
         Optional<Wizyta> wizyta = wizytaRepository.findById(wizytaId);
 
         if (wizyta.isEmpty()) {
-            throw new ZwierzeNieZnalezioneException(
-                    "Wizyta o ID " + wizytaId + " nie została znaleziona"
-            );
+            throw new ZwierzeNieZnalezioneException("Wizyta o ID " + wizytaId + " nie została znaleziona");
         }
 
         Wizyta existingWizyta = wizyta.get();
@@ -106,17 +104,27 @@ public class WizytaService {
             throw new IllegalStateException("Ta wizyta została już wcześniej zrealizowana.");
         }
 
+        // --- NOWE: Tworzymy nowy zabieg (wykorzystujemy Twoją klasę Konsultacja) ---
+        Konsultacja zabieg = new Konsultacja();
+        zabieg.setNazwa(dto.getNazwa());
+        zabieg.setCenaBazowa(dto.getKoszt());
+        zabieg.setWywiad(dto.getOpis());
+        zabieg.setWizyta(existingWizyta); // Przypisujemy zabieg do wizyty
 
-        if (existingWizyta.getZabiegi() != null && !existingWizyta.getZabiegi().isEmpty()) {
-            for (ZabiegMedyczny zabieg : existingWizyta.getZabiegi()) {
-                zabieg.wykonajZabieg(existingWizyta);
-            }
+        // Upewniamy się, że lista nie jest nullem i dodajemy zabieg
+        if (existingWizyta.getZabiegi() == null) {
+            existingWizyta.setZabiegi(new java.util.ArrayList<>());
         }
+        existingWizyta.getZabiegi().add(zabieg);
 
+        // Wykonujemy zabiegi (Twoja logika z log.info)
+        for (ZabiegMedyczny z : existingWizyta.getZabiegi()) {
+            z.wykonajZabieg(existingWizyta);
+        }
 
         existingWizyta.setStatus(StatusWizyty.ZAKONCZONA);
 
-
+        // Dzięki 'cascade = CascadeType.ALL' w klasie Wizyta, zabieg zapisze się automatycznie do bazy!
         return wizytaRepository.save(existingWizyta);
     }
 }

@@ -6,12 +6,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/wizyty")
 @RequiredArgsConstructor
 public class WizytaController {
 
     private final WizytaService wizytaService;
+    private final WizytaRepository wizytaRepository;
 
 
     @PostMapping("/umow")
@@ -22,8 +25,12 @@ public class WizytaController {
     }
 
     @PutMapping("/{wizytaId}/zrealizuj")
-    public ResponseEntity<Wizyta> zrealizujWizyte(@PathVariable Integer wizytaId) {
-        Wizyta zrealizowana = wizytaService.zrealizujWizyte(wizytaId);
+    public ResponseEntity<Wizyta> zrealizujWizyte(@PathVariable Integer wizytaId,@RequestBody ZabiegCreateDTO dto) {
+        Wizyta zrealizowana = wizytaService.zrealizujWizyte(wizytaId,dto);
         return ResponseEntity.ok(zrealizowana);
+    }
+    @GetMapping
+    public ResponseEntity<List<Wizyta>> pobierzWszystkie() {
+        return ResponseEntity.ok(wizytaRepository.findAll());
     }
 }
