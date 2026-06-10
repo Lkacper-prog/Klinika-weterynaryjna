@@ -134,8 +134,6 @@ curl http://localhost:8080/api/zwierzeta/1/raport
 
 ## 👥 4. Skład zespołu 
 
-| Imię | 
-|------|------|
 | **Kacper** | 
 | **Damian** |
 | **Konrad** | 
