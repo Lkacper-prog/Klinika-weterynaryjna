@@ -1,6 +1,6 @@
-# 🏥 Klinika Weterynaryjna - System Zarządzania Wizytami
+#  Klinika Weterynaryjna - System Zarządzania Wizytami
 
-## 📋 1. Opis Celu Projektu
+##  1. Opis Celu Projektu
 
 **Klinika Weterynaryjna** to kompleksowy system webowy oparty na Spring Boot, który:
 - ✅ Rejestruje i zarządza danymi zwierząt
@@ -10,10 +10,9 @@
 - ✅ Zarządza rolami użytkowników (Klient, Weterynarz)
 - ✅ Zapewnia centralizowaną obsługę błędów z wiadomościami diagnostycznymi
 
-
 ### Główne Funkcjonalności
 1. **Zarządzanie Zwierzętami** - rejestracja, dane, historia leczenia
-2. **Planowanie Wizyt** - umawianie z detekcją konfliktów
+2. **Planowanie Wizyt** - umawianie z detekcją konfliktów, realizacja zabiegów
 3. **Procedury Medyczne** - konsultacje, operacje, szczepienia (polimorficznie)
 4. **Raporty Leczenia** - koszty, zabiegi, liczba wizyt
 5. **Obsługa Błędów** - centralizowana, z komunikatami diagnostycznymi
@@ -24,7 +23,7 @@
 
 ### Struktura pakietów ###
 
-```
+```text
 pl.klinika/
 ├── Core/                              # Konfiguracja i obsługa błędów
 │   ├── GlobalExceptionHandler         # Centralna obsługa wyjątków
@@ -60,7 +59,6 @@ pl.klinika/
     ├── WizytaRepository               # Dostęp do BD
     ├── WizytaService                  # Logika biznesowa
     └── WizytaController               # Endpointy REST
-```
 
 ## 🚀 3. Instrukcja Uruchomienia i Użycia
 
