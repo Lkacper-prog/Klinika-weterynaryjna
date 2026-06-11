@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html","k":"18"},{"l":"pl.klinika"},{"l":"pl.klinika.Core"},{"l":"pl.klinika.Uzytkownik"},{"l":"pl.klinika.Wizyta"},{"l":"pl.klinika.Zwierze"}];updateSearchResults();
